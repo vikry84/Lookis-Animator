@@ -3902,3 +3902,31 @@ if(savedBgTheme) {
     document.body.style.background = savedBgTheme;
     document.getElementById('app').style.background = savedBgTheme;
 }
+
+// PWA Install Logic
+let deferredPrompt;
+const installBtn = document.getElementById('btn-install');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if(installBtn) installBtn.style.display = 'flex';
+});
+
+if(installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.style.display = 'none';
+      }
+      deferredPrompt = null;
+    }
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  if(installBtn) installBtn.style.display = 'none';
+  deferredPrompt = null;
+});
