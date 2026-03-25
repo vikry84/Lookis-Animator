@@ -146,4 +146,5 @@ body{background:#111;font-family:'Courier New',monospace;}
   #right-panel { width: 100% !important; border-left: none; border-top: 1px solid #222; flex:1; max-height:45vh; }
   #canvas-area { flex: 1; min-height: 45vh; }
   #toolbar { left: 10px; max-width: calc(100vw - 20px); padding-right: 12px; }
+  .desktop-only { display: none !important; }
 }
