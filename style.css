@@ -140,6 +140,15 @@ body{background:#111;font-family:'Courier New',monospace;}
 #audio-filename{font-size:12px;color:#888;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 #audio-offset-wrap{display:flex;align-items:center;gap:4px;}
 
+@media (min-width: 801px) and (max-width: 1366px) {
+  .tbtn { width: 28px; height: 28px; }
+  .tbtn svg { width: 16px; height: 16px; }
+  .tbtn.tbtn-wide { font-size: 10px; width: auto !important; padding:0 6px; }
+  .numbox { width: 36px; font-size: 10px; padding:2px; }
+  #toolbar, #sel-toolbar { gap: 1px; padding: 3px 5px; }
+  .sep { margin:0 2px; }
+}
+
 @media (max-width: 800px) {
   #app { padding-top: 55px; }
   #main-area { flex-direction: column; }

@@ -327,79 +327,7 @@ window.addEventListener('mouseup',e2=>{
   if(symDrag){symDrag=null; updateCursor();}
 });
 
-// ── Palette system ───────────────────────────────────────────────
-let palette=[]; // array of hex strings
-let swatchSize=18;
-const MAX_PALETTE=64;
-
-function rgbToHex(r,g,b){return'#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');}
-
-function addCurrentColorTopalette(){
-  addColorToPalette(brushColor);
-}
-
-function addColorToPalette(hex){
-  hex=hex.toLowerCase();
-  if(palette.includes(hex)) return; // no duplicates
-  palette.unshift(hex); // newest first
-  if(palette.length>MAX_PALETTE) palette.pop();
-  renderPalette();
-  savePaletteToStorage();
-}
-
-function removeColorFromPalette(hex){
-  palette=palette.filter(c=>c!==hex);
-  renderPalette();
-  savePaletteToStorage();
-}
-
-function clearPalette(){
-  palette=[];
-  renderPalette();
-  savePaletteToStorage();
-}
-
-function setSwatchSize(s){
-  swatchSize=Math.max(8,Math.min(48,s));
-  renderPalette();
-}
-
-function pickPaletteColor(hex){
-  brushColor=hex;
-  document.getElementById('color-pick').value=hex;
-  renderPalette();
-  updateCursor();
-}
-
-function renderPalette(){
-  const container=document.getElementById('palette-swatches');
-  container.innerHTML='';
-  palette.forEach(hex=>{
-    const sw=document.createElement('div');
-    sw.className='swatch'+(brushColor.toLowerCase()===hex?' active-swatch':'');
-    sw.style.width=swatchSize+'px';
-    sw.style.height=swatchSize+'px';
-    sw.style.background=hex;
-    sw.title=hex+'\nClick: use  |  Right-click: remove';
-    sw.addEventListener('click',()=>pickPaletteColor(hex));
-    sw.addEventListener('contextmenu',e=>{e.preventDefault();removeColorFromPalette(hex);});
-    container.appendChild(sw);
-  });
-}
-
-function savePaletteToStorage(){
-  try{localStorage.setItem('ra_palette',JSON.stringify(palette));}catch(e){}
-}
-function loadPaletteFromStorage(){
-  try{
-    const saved=localStorage.getItem('ra_palette');
-    if(saved) palette=JSON.parse(saved);
-  }catch(e){}
-}
-
-function saveCurrentColor(){
-  addColorToPalette(brushColor);
-}
+// ── Old palette system replaced ──
 
 function openSettings(){
   alert("Panel Pengaturan Khusus (Tema, Pintasan, Pilihan Proyek) sedang dalam tahap pengembangan dan akan dirilis pada iterasi selanjutnya! 🙏");
@@ -430,9 +358,9 @@ function loadReferenceImage(e){
   reader.readAsDataURL(file);
 }
 
-// Auto-save color to palette when drawing ends
+// Auto-save disabled for stroke (handled explicitly)
 function autoSaveColor(){
-  addColorToPalette(brushColor);
+  // Kept empty to avoid errors from legacy calls
 }
 let lassoPoints=[],lassoActive=false,lassoMask=null,lassoImgData=null,lassoDrag=false,lassoDragStart=null,lassoDragOrigin=null;
 
@@ -885,7 +813,7 @@ function pickShape(s){
   const si=document.getElementById('si-'+s);if(si)si.classList.add('active-shape');
 }
 
-// Close shape menu on outside click
+// Close dropdown menus on outside click
 document.addEventListener('click',e=>{
   if(!e.target.closest('#shape-dropdown'))
     document.getElementById('shape-menu').classList.remove('open');
@@ -894,6 +822,10 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('#workspace-wrap')){
     const wm=document.getElementById('workspace-menu');
     if(wm)wm.style.display='none';
+  }
+  if(!e.target.closest('#palette-wrap')){
+    const pm=document.getElementById('palette-menu');
+    if(pm && e.target.closest('.tbtn[onclick="togglePaletteMenu()"]')===null) pm.style.display='none';
   }
 });
 
@@ -3669,12 +3601,8 @@ function importRefImage(){
 
 loadFrame(0);renderLayers();rebuildThumbs();updateUndoBtn();setSymmetry('none');
 document.getElementById('hold-in').value=1;
-loadPaletteFromStorage();
-// Seed palette with some useful defaults if empty
-if(palette.length===0){
-  ['#222222','#ffffff','#ff4444','#44aaff','#44dd88','#ffcc22','#ff8800','#aa44ff'].forEach(c=>palette.push(c));
-}
-renderPalette();
+
+if(typeof window.renderPalette === 'function') window.renderPalette();
 updateCursor();
 // Initialize audio UI
 setTimeout(()=>{drawWaveform();updateAudioPlayhead(0);},100);
@@ -3831,7 +3759,13 @@ window.saveSettings = function() {
 };
 
 const extendedPalette = '["#000000","#ffffff","#ff0000","#00ff00","#0000ff","#ffff00","#00ffff","#ff00ff","#222222","#444444","#888888","#cccccc","#ff8800","#884400","#8b4513","#ffe4c4","#ff4444","#ff44aa","#ff8888","#44aaff","#8888ff","#44ff44","#88ff88"]';
-let savedColors = JSON.parse(localStorage.getItem('lookis_colors')||extendedPalette);
+let savedColors = [];
+try {
+  savedColors = JSON.parse(localStorage.getItem('lookis_colors')||extendedPalette);
+} catch(e) {
+  savedColors = JSON.parse(extendedPalette);
+}
+if (!Array.isArray(savedColors)) savedColors = JSON.parse(extendedPalette);
 
 window.renderPalette = function() {
   const p = document.getElementById('palette-swatches');
