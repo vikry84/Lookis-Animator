@@ -35,3 +35,23 @@ npm install # atau pip install, cmake, dll.
 
 # Run the application
 npm start
+📚 Tutorials & Documentation
+Want to learn how to master the Xsheet or create your first animation? Check out the video tutorials on the Vikry YouTube channel for step-by-step guides, tips, and tricks on making the most out of Lookis.
+
+You can also read our full written documentation in the Wiki.
+
+🤝 Contributing
+Lookis is a community-driven project! We welcome contributions from developers, artists, and translators.
+
+Found a bug? Open an Issue.
+
+Want to add a feature? Submit a Pull Request.
+
+Read our Contributing Guidelines to get started.
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+Created with ❤️ for the 2D Animation Community.
+
+
